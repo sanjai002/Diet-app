@@ -40,19 +40,24 @@ Key features of Diet App include:
    cd Diet-app
 2. **Install dependencies:**
 
+```bash
 pip install -r requirements.txt
 
 3. **Apply migrations:**
 
+```bash
 python manage.py migrate
 
 4. **Create a superuser:**
+```bash
 python manage.py createsuperuser
+
 Follow the prompts to create an admin user for Django Admin.
 
 ## Usage
 1. **Run the development server:**
 
+```bash
 python manage.py runserver
 The project will be accessible at http://localhost:8000/
 
