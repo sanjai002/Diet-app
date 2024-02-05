@@ -30,7 +30,6 @@ Key features of Diet App include:
 
 - **Admin Panel:** Access an admin panel for administrative tasks, such as managing users and viewing system statistics.
 
-... (Add more features as needed)
 
 ## Installation
 
