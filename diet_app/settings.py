@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'diet',
-    'bootstrap5',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -124,7 +124,7 @@ STATICFILES_DIRS = (os.path.join('diet/static'), )
 MEDIA_URL = '/media/'  
   
 # Path where media is stored  
-MEDIA_ROOT = os.path.join(('diet/static'),)
+MEDIA_ROOT = os.path.join(('diet/media'),)
 
 
 # Default primary key field type
@@ -134,3 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "diet.User" 
 
+CRONJOBS = [
+    ('0 0 * * *', 'myapp.management.commands.reset_calories.Command'),
+]
