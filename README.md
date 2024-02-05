@@ -37,7 +37,7 @@ Key features of Diet App include:
 
    ```bash
    git clone https://github.com/sanjai002/Diet-app.git
-   cd Diet-app
+
 2. **Install dependencies:**
 
    ```bash
