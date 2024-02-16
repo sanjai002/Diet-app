@@ -44,7 +44,7 @@ class FoodCategory(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=50)
-    unit = models.CharField(max_length=10)
+    unit = models.CharField(max_length=30)
 
     def __str__(self):
         return self.name + " (" + self.unit + ")"
