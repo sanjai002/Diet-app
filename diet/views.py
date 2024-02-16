@@ -143,7 +143,7 @@ def details(request):
         else:
             BMR=447.593 + (9.247*float(weight)) + (3.098*float(height)) -(4.330*float(age))
         TDEE=BMR*float(activity)
-        if goal=='loss':
+        if goal=='lose':
             calories=TDEE*0.8
         elif goal=='maintain':
             calories=TDEE*1
@@ -231,13 +231,15 @@ def blood_register(request):
         return HttpResponse("Error! Please Try Again.")
 
 
-
+@login_required
 def get_user_and_food_info(request):
     food = Food.objects.all()
-    details = UserDetails.objects.get(username=request.user)
+    user=request.user
+    details = UserDetails.objects.get(username=user)
     
     try:
-        food_log = FoodLog.objects.filter(username=request.user)
+        
+        food_log = FoodLog.objects.filter(username=user)
         user_food = food_log.values_list('food_consumed', flat=True)
         
         total_calories = sum(log.food_consumed.calories * log.quantity for log in food_log)
