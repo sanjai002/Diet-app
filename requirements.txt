@@ -2,3 +2,5 @@ django==4.1
 pillow==9.3.0
 wheel==0.41.2
 django-crontab==0.7.1
+joblib==1.2.0
+numpy==1.26.1

@@ -18,5 +18,8 @@ urlpatterns=[
     path('blood_register/',views.blood_register,name="blood_register"),
     path('food_details/<int:food_id>/',views.food_details_view,name="food_details"),
     path('foods/foods_list/calorie_view',views.food_consumption, name='calorie_view'),
+    path('disease',views.disease_prediction,name='disease_prediction'),
+    path('disease/diabetics_prediction',views.diabetes_detection,name='diabetics_prediction'),
+    path('disease/heart_disease_prediction',views.predict_heart_disease,name='heart_disease_prediction'),
 
 ]

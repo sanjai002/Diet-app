@@ -2,7 +2,7 @@
 from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from django.urls import path,reverse
-from numpy import repeat
+import numpy as np
 from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
 from .models import *
@@ -10,14 +10,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import joblib
 
 
-
-
+diabetics_model = joblib.load('train/diabetes_prediction_model_svm.joblib')
+heart_disease_model = joblib.load('train/heart_disease_prediction_model_svm.joblib')
 def index(request):
     food=Food.objects.all()[:5]
     return render(request,"index.html",{
@@ -215,8 +214,6 @@ def blood_list(request):
 
 
 
-
-
 @csrf_exempt
 def blood_register(request):
     if request.method=='POST':
@@ -275,3 +272,78 @@ def food_consumption(request):
 def foodview(request):
     context=get_user_and_food_info(request)
     return render(request, 'food_view.html', context)
+
+def disease_prediction(request):
+    return render(request,'disease_prediction.html')
+
+def diabetes_detection(request):
+    if request.method == 'POST':
+        pregnancies = float(request.POST.get('pregnancies'))
+        glucose = float(request.POST.get('glucose'))
+        blood_pressure = float(request.POST.get('blood_pressure'))
+        skin_thickness = float(request.POST.get('skin_thickness'))
+        insulin = float(request.POST.get('insulin'))
+        bmi = float(request.POST.get('bmi'))
+        diabetes_pedigree_function = float(request.POST.get('diabetes_pedigree_function'))
+        age = float(request.POST.get('age'))
+        
+
+        prediction = diabetics_model.predict(np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]]))
+        
+        # Predict probability
+        if prediction[0] == 1:
+            prediction_result = "Diabetes detected"
+            prediction_proba = diabetics_model.predict_proba(np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]]))
+            percentage_chance_diabetes = prediction_proba[0][1] * 100  # probability of class 1 (diabetes)
+        else:
+            prediction_result = "No Diabetes detected"
+            percentage_chance_diabetes = 0  # probability of class 0 (not diabetes)
+        
+        # Get the percentage chance of diabetes
+        return JsonResponse({
+            'message': prediction_result, 
+            'chance_diabetes': f'{percentage_chance_diabetes:.2f}%'
+        })
+    
+
+def predict_heart_disease(request):
+    if request.method == 'POST':
+            # Extract input data from the request
+            age = int(request.POST.get('age'))
+            sex = int(request.POST.get('sex'))
+            cp = int(request.POST.get('cp'))
+            trestbps = int(request.POST.get('trestbps'))
+            chol = int(request.POST.get('chol'))
+            fbs = int(request.POST.get('fbs'))
+            restecg = int(request.POST.get('restecg'))
+            thalach = int(request.POST.get('thalach'))
+            exang = int(request.POST.get('exang'))
+            oldpeak = float(request.POST.get('oldpeak'))
+            slope = int(request.POST.get('slope'))
+            ca = int(request.POST.get('ca'))
+            thal = int(request.POST.get('thal'))
+
+            # Preprocess the input data
+            input_data = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
+            # Make prediction
+            prediction = heart_disease_model.predict(input_data)[0]
+            
+            # Get the probability of heart disease
+            
+
+            # Return the prediction result
+            if prediction == 1:
+                prediction_result = "Heart disease detected"
+                prediction_proba = heart_disease_model.predict_proba(input_data)[0]
+                percentage_chance = prediction_proba[1] * 100  # probability of class 1 (heart disease)
+            else:
+                prediction_result = "No heart disease detected"
+                prediction_proba = heart_disease_model.predict_proba(input_data)[0]
+                percentage_chance = 0  # probability of class 1 (heart disease)            
+            # Return the prediction result and the probability of heart disease
+            return JsonResponse({
+                'message': prediction_result, 
+                'chance_heart_disease': f'{percentage_chance:.2f}%'
+            })
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
