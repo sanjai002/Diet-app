@@ -29,10 +29,10 @@
             </div>
             {% endfor %}
         </div>
-        <div class="swiper-button-next "></div>
-        <div class="swiper-button-prev"></div>
+        
     </div>
-
+    <div class="swiper-button-next "></div>
+    <div class="swiper-button-prev"></div>
     <div class="text-center">
         <a href="{% url 'food_list' %}"><button id="showMoreButton" class="btn btn-primary mt-3">Show More</button></a>
     </div>
@@ -117,8 +117,8 @@
     // Swiper Initialization
     document.addEventListener('DOMContentLoaded', function () {
         var swiper = new Swiper('.swiper-container.featured-foods-slider', {
-            slidesPerView: 6,
-            spaceBetween: 10,
+            slidesPerView: 4,
+            spaceBetween: 5,
             navigation: {
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev',

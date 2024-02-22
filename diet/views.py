@@ -18,7 +18,7 @@ import joblib
 diabetics_model = joblib.load('train/diabetes_prediction_model_svm.joblib')
 heart_disease_model = joblib.load('train/heart_disease_prediction_model_svm.joblib')
 def index(request):
-    food=Food.objects.all()[:5]
+    food=Food.objects.all()
     return render(request,"index.html",{
         'food':food
     })
