@@ -1,5 +1,6 @@
 # models.py
 
+from telnetlib import BM
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -14,7 +15,9 @@ class UserDetails(models.Model):
     weight = models.IntegerField(null=False)
     gender = models.CharField(max_length=10, null=True)
     BMR = models.FloatField()
+    BMI=models.FloatField()
     daily_calories = models.IntegerField(null=True)
+
 
     def __str__(self):
         return f'{self.username}'

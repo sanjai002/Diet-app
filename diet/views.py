@@ -78,26 +78,30 @@ def search_food(request):
 
 
 
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
 def user_login(request):
-    previous_page = request.GET.get('next', None)
+    next_page = request.GET.get('next')
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        print(next_page)
         if user is not None:
-            login(request, user)
-            if previous_page:
-                return redirect(previous_page)
+            login(request, user)            
+            if next_page :
+                return redirect(next_page)
             else:
-                return redirect(index)
+                return redirect(reverse('index'))  # Redirect to index if 'next' is not valid
         else:
-            return render(request,'login.html',
-                          {
-                              'message':'Wrong username or password'
-                          })
-    return render(request,'login.html',{
-       
-    })
+            return render(request, 'login.html', {'message': 'Wrong username or password','next': next_page})
+    else:
+        # Display login page
+        return render(request, 'login.html', {'next': next_page})
+
+
 
 def register(request):
     if request.method == 'POST':
@@ -137,6 +141,7 @@ def details(request):
         activity=request.POST['activity']
         goal=request.POST['goal']
         print("Age",age,"Gender",gender,"Height",height,"Weight",weight,"Activity",activity,"goal",goal)
+        BMI=float((weight/((height/100)**2)))
         if gender=='male':
             BMR=88.362 + (13.397 * float(weight)) + (4.799 * float(height)) - (5.677 * float(age))
         else:
@@ -152,7 +157,7 @@ def details(request):
             pass
         try:
             user=request.user
-            UserDetails(username=user,age=age,height=height,weight=weight,gender=gender,BMR=BMR,daily_calories=calories).save()
+            UserDetails(username=user,age=age,height=height,weight=weight,gender=gender,BMR=BMR,BMI=BMI,daily_calories=calories).save()
             return redirect(index)
         except:
             return render(request,'details.html',{
@@ -273,19 +278,27 @@ def foodview(request):
     context=get_user_and_food_info(request)
     return render(request, 'food_view.html', context)
 
+@login_required
 def disease_prediction(request):
-    return render(request,'disease_prediction.html')
-
+    user=request.user
+    details = UserDetails.objects.get(username=user)
+    
+    # Get the form data and
+    return render(request,'disease_prediction.html',{
+        'UserDetails':details,
+    })
+@login_required
 def diabetes_detection(request):
+    details=UserDetails.objects.filter(username=request.user).first()
     if request.method == 'POST':
         pregnancies = float(request.POST.get('pregnancies'))
         glucose = float(request.POST.get('glucose'))
         blood_pressure = float(request.POST.get('blood_pressure'))
         skin_thickness = float(request.POST.get('skin_thickness'))
         insulin = float(request.POST.get('insulin'))
-        bmi = float(request.POST.get('bmi'))
+        bmi = float(details.BMI)
         diabetes_pedigree_function = float(request.POST.get('diabetes_pedigree_function'))
-        age = float(request.POST.get('age'))
+        age=int(details.age)
         
 
         prediction = diabetics_model.predict(np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, diabetes_pedigree_function, age]]))
@@ -305,12 +318,16 @@ def diabetes_detection(request):
             'chance_diabetes': f'{percentage_chance_diabetes:.2f}%'
         })
     
-
+@login_required   
 def predict_heart_disease(request):
+    details=UserDetails.objects.filter(username=request.user).first()
     if request.method == 'POST':
             # Extract input data from the request
-            age = int(request.POST.get('age'))
-            sex = int(request.POST.get('sex'))
+            age=int(details.age)
+            if details.gender== 'male':
+                sex=1
+            else:
+                sex=0
             cp = int(request.POST.get('cp'))
             trestbps = int(request.POST.get('trestbps'))
             chol = int(request.POST.get('chol'))

@@ -84,36 +84,32 @@
           <form id="diabetes-form">
             {% csrf_token %}
             <div class="form-group">
+              {% if details.gender == 'female' %}
                 <label for="pregnancies" title="Number of times pregnant.">Pregnancies</label>
                 <input type="number" step="1" class="form-control" id="pregnancies" placeholder="Enter number of pregnancies" name="pregnancies" required>
+              {% else %}
+                 <input type="hidden" name="pregnancies" value="0">
+              {% endif %}
             </div>
             <div class="form-group">
                 <label for="glucose" title="Plasma glucose concentration a 2 hours in an oral glucose tolerance test.">Glucose</label>
-                <input type="number" step="0.01" class="form-control" id="glucose" placeholder="Enter glucose level" name="glucose" required>
+                <input type="number" step="0.01" class="form-control" id="glucose" placeholder="Enter glucose level (70-200 mg/dL)" name="glucose" required>
             </div>
             <div class="form-group">
                 <label for="blood_pressure" title="Diastolic blood pressure (mm Hg)">Blood Pressure</label>
-                <input type="number" step="1" class="form-control" id="blood_pressure" placeholder="Enter blood pressure" name="blood_pressure" required>
+                <input type="number" step="1" class="form-control" id="blood_pressure" placeholder="Enter blood pressure (60-200 mm Hg)" name="blood_pressure" required>
             </div>
             <div class="form-group">
                 <label for="skin_thickness" title="Triceps skin fold thickness (mm)">Skin Thickness</label>
-                <input type="number" step="0.01" class="form-control" id="skin_thickness" placeholder="Enter skin thickness" name="skin_thickness" required>
+                <input type="number" step="0.01" class="form-control" id="skin_thickness" placeholder="Enter skin thickness (10-50 mm)" name="skin_thickness" required>
             </div>
             <div class="form-group">
                 <label for="insulin" title="2-Hour serum insulin (mu U/ml)">Insulin</label>
-                <input type="number" step="0.01" class="form-control" id="insulin" placeholder="Enter insulin level" name="insulin" required>
-            </div>
-            <div class="form-group">
-                <label for="bmi" title="Body mass index (weight in kg/(height in m)^2)">BMI</label>
-                <input type="number" step="0.01" class="form-control" id="bmi" placeholder="Enter BMI" name="bmi" required>
+                <input type="number" step="0.01" class="form-control" id="insulin" placeholder="Enter insulin level (5-200 mu U/ml)" name="insulin" required>
             </div>
             <div class="form-group">
                 <label for="diabetes_pedigree_function" title="Diabetes pedigree function">Diabetes Pedigree Function</label>
-                <input type="number" step="0.01" class="form-control" id="diabetes_pedigree_function" placeholder="Enter diabetes pedigree function" name="diabetes_pedigree_function" required>
-            </div>
-            <div class="form-group">
-                <label for="age" title="Age of the patient">Age</label>
-                <input type="number" step="1" class="form-control" id="age" placeholder="Enter age" name="age" required>
+                <input type="number" step="0.01" class="form-control" id="diabetes_pedigree_function" placeholder="Enter diabetes pedigree function (0.1-2.5)" name="diabetes_pedigree_function" required>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -129,51 +125,40 @@
         <form id="heart-disease-form">
           {% csrf_token %}
           <div class="form-group">
-            <label for="age" title="Age of the patient.">Age</label>
-            <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" required>
-          </div>
-          <div class="form-group">
-            <label for="sex" title="Gender of the patient.">Sex</label>
-            <select class="form-control" id="sex" name="sex" required>
-              <option value="0">Female</option>
-              <option value="1">Male</option>
-            </select>
-          </div>
-          <div class="form-group">
             <label for="cp" title="Chest pain type.">Chest Pain Type (cp)</label>
-            <input type="number" class="form-control" id="cp" placeholder="Enter chest pain type" name="cp" required>
+            <input type="number" class="form-control" id="cp" placeholder="Enter chest pain type (1-4)" name="cp" required>
           </div>
           <div class="form-group">
             <label for="trestbps" title="Resting blood pressure.">Resting Blood Pressure (trestbps)</label>
-            <input type="number" class="form-control" id="trestbps" placeholder="Enter resting blood pressure" name="trestbps" required>
+            <input type="number" class="form-control" id="trestbps" placeholder="Enter resting blood pressure (90-200 mm Hg)" name="trestbps" required>
           </div>
           <div class="form-group">
             <label for="chol" title="Serum cholesterol.">Serum Cholesterol (chol)</label>
-            <input type="number" class="form-control" id="chol" placeholder="Enter serum cholesterol" name="chol" required>
+            <input type="number" class="form-control" id="chol" placeholder="Enter serum cholesterol (100-400 mg/dL)" name="chol" required>
           </div>
           <div class="form-group">
             <label for="fbs" title="Fasting blood sugar.">Fasting Blood Sugar (fbs)</label>
-            <input type="number" class="form-control" id="fbs" placeholder="Enter fasting blood sugar" name="fbs" required>
+            <input type="number" class="form-control" id="fbs" placeholder="Enter fasting blood sugar (70-200 mg/dL)" name="fbs" required>
           </div>
           <div class="form-group">
             <label for="restecg" title="Resting electrocardiographic results.">Resting Electrocardiographic Results (restecg)</label>
-            <input type="number" class="form-control" id="restecg" placeholder="Enter resting electrocardiographic results" name="restecg" required>
+            <input type="number" class="form-control" id="restecg" placeholder="Enter resting electrocardiographic results (0-2)" name="restecg" required>
           </div>
           <div class="form-group">
             <label for="thalach" title="Maximum heart rate achieved.">Maximum Heart Rate Achieved (thalach)</label>
-            <input type="number" class="form-control" id="thalach" placeholder="Enter maximum heart rate achieved" name="thalach" required>
+            <input type="number" class="form-control" id="thalach" placeholder="Enter maximum heart rate achieved (50-220 bpm)" name="thalach" required>
           </div>
           <div class="form-group">
             <label for="exang" title="Exercise induced angina.">Exercise Induced Angina (exang)</label>
-            <input type="number" class="form-control" id="exang" placeholder="Enter exercise induced angina" name="exang" required>
+            <input type="number" class="form-control" id="exang" placeholder="Enter exercise induced angina (0 or 1)" name="exang" required>
           </div>
           <div class="form-group">
-            <label for="oldpeak" title="ST depression induced by exercise relative to rest.">ST Depression Induced by Exercise Relative to Rest (oldpeak)</label>
-            <input type="number" class="form-control" id="oldpeak" placeholder="Enter ST depression induced by exercise relative to rest" name="oldpeak" required>
+            <label for="oldpeak" title="ST depression induced by exercise relative to rest.">ST Depression Induced by Exercise Relative to Rest (oldpeak) </label>
+            <input type="number" class="form-control" id="oldpeak" placeholder="Enter ST depression induced by exercise relative to rest (0-6)" name="oldpeak" required>
           </div>
           <div class="form-group">
             <label for="slope" title="Slope of the peak exercise ST segment.">Slope of the Peak Exercise ST Segment (slope)</label>
-            <input type="number" class="form-control" id="slope" placeholder="Enter slope of the peak exercise ST segment" name="slope" required>
+            <input type="number" class="form-control" id="slope" placeholder="Enter slope of the peak exercise ST segment (0-2)" name="slope" required>
           </div>
           <div class="form-group">
             <label for="ca" title="Number of major vessels colored by fluoroscopy.">Number of Major Vessels (0-3) Colored by Flourosopy (ca)</label>
@@ -181,7 +166,7 @@
           </div>
           <div class="form-group">
             <label for="thal" title="Thalassemia.">Thalassemia (thal)</label>
-            <input type="number" class="form-control" id="thal" placeholder="Enter thalassemia" name="thal" required>
+            <input type="number" class="form-control" id="thal" placeholder="Enter thalassemia (1-3)" name="thal" required>
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary">Submit</button>

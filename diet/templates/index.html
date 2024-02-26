@@ -68,7 +68,7 @@
                 <h2>AI Health Insights</h2>
                 <p>Gain insights into future health trends and preventive measures.</p>
                 <div class="text-center">
-                    <a href="{% url 'disease_prediction' %}" class="btn btn-success">Explore Insights</a>
+                    <button id="DiseasePredictionbtn" class="btn btn-success">Explore Insights</button>
                 </div>
             </div>
         </div>
@@ -139,7 +139,20 @@
             {% else %}
             // Code to show modal using jQuery (you can use a modal library like Bootstrap modal)
             if (confirm('You are not logged in. Please log in to continue.') == true) {
-                window.location.href = "{% url 'login' %}";
+                window.location.href = "{% url 'login' %}?next={% url 'food_track' %}";
+            }
+            {% endif %}
+        });
+    });
+    $(document).ready(function () {
+        $('#DiseasePredictionbtn').click(function () {
+            console.log('clicked')
+            {% if user.is_authenticated %}
+            window.location.href = "{% url 'disease_prediction' %}";
+            {% else %}
+            // Code to show modal using jQuery (you can use a modal library like Bootstrap modal)
+            if (confirm('You are not logged in. Please log in to continue.') == true) {
+                window.location.href = "{% url 'login' %}?next={% url 'disease_prediction' %}";
             }
             {% endif %}
         });

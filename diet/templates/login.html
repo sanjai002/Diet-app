@@ -49,7 +49,7 @@
             <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Login to your account</h2>
 
-              <form method="post" action="{% url 'login' %}">
+              <form method="post" action="{% url 'login' %}?next={{ next }}">
                 {% csrf_token %}
 
                 <div class="form-outline mb-4">
@@ -59,7 +59,11 @@
                 <div class="form-outline mb-4">
                   <input type="password" id="form3Example4cg" class="form-control form-control-lg" name="password" placeholder="Password" required>
                 </div>
-
+                <div class="text-center text-danger mb-2">
+                  {% if message %}
+                  <label class="" for="">{{message}}</label>
+                  {% endif %}
+                </div>
                 <div class="d-flex justify-content-center">
                   <button type="submit" class="btn btn-success btn-block btn-lg text-body" onclick="validateAndLogin()">Login</button>
                 </div>
