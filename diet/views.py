@@ -141,7 +141,7 @@ def details(request):
         activity=request.POST['activity']
         goal=request.POST['goal']
         print("Age",age,"Gender",gender,"Height",height,"Weight",weight,"Activity",activity,"goal",goal)
-        BMI=float((weight/((height/100)**2)))
+        BMI=float((int(weight)/(((int(height))/100)**2)))
         if gender=='male':
             BMR=88.362 + (13.397 * float(weight)) + (4.799 * float(height)) - (5.677 * float(age))
         else:
