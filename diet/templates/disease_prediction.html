@@ -137,9 +137,12 @@
             <input type="number" class="form-control" id="chol" placeholder="Enter serum cholesterol (100-400 mg/dL)" name="chol" required>
           </div>
           <div class="form-group">
-            <label for="fbs" title="Fasting blood sugar.">Fasting Blood Sugar (fbs)</label>
-            <input type="number" class="form-control" id="fbs" placeholder="Enter fasting blood sugar (70-200 mg/dL)" name="fbs" required>
-          </div>
+            <label for="fbs" title="Fasting blood sugar.">Fasting Blood Sugar (fbs) greater than 120mg/dl</label>
+            <select class="form-control" id="fbs" name="fbs" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+        </div>
           <div class="form-group">
             <label for="restecg" title="Resting electrocardiographic results.">Resting Electrocardiographic Results (restecg)</label>
             <input type="number" class="form-control" id="restecg" placeholder="Enter resting electrocardiographic results (0-2)" name="restecg" required>
@@ -154,7 +157,7 @@
           </div>
           <div class="form-group">
             <label for="oldpeak" title="ST depression induced by exercise relative to rest.">ST Depression Induced by Exercise Relative to Rest (oldpeak) </label>
-            <input type="number" class="form-control" id="oldpeak" placeholder="Enter ST depression induced by exercise relative to rest (0-6)" name="oldpeak" required>
+            <input type="number" class="form-control"  step="0.01"  id="oldpeak" placeholder="Enter ST depression induced by exercise relative to rest (0-6)" name="oldpeak" required>
           </div>
           <div class="form-group">
             <label for="slope" title="Slope of the peak exercise ST segment.">Slope of the Peak Exercise ST Segment (slope)</label>
@@ -162,7 +165,7 @@
           </div>
           <div class="form-group">
             <label for="ca" title="Number of major vessels colored by fluoroscopy.">Number of Major Vessels (0-3) Colored by Flourosopy (ca)</label>
-            <input type="number" min="1" max="3" class="form-control" id="ca" placeholder="Enter number of major vessels colored by fluoroscopy" name="ca" required>
+            <input type="number" min="0" max="3" class="form-control" id="ca" placeholder="Enter number of major vessels colored by fluoroscopy" name="ca" required>
           </div>
           <div class="form-group">
             <label for="thal" title="Thalassemia.">Thalassemia (thal)</label>
@@ -240,7 +243,7 @@
           // Display prediction result
           $('#heart-disease-result').text(response.message);
           $('#heart-disease-chance').text('Chance of heart disease: ' + response.chance_heart_disease);
-          $("#heart-disease-form")[0].reset();
+          //$("#heart-disease-form")[0].reset();
         },
         error: function (xhr, status, error) {
           console.error(formData)

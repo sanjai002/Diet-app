@@ -1,38 +1,56 @@
+# importing required libraries
+import numpy as np
 import pandas as pd
+import pickle
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score
-import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
 
-# Load the dataset
-url = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
-names = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'target']
-data = pd.read_csv(url, names=names)
 
-# Handling missing values
-data = data.replace('?', pd.NA).dropna()
+# loading and reading the dataset
 
-# Convert categorical variables to dummy variables
+heart = pd.read_csv("heart_cleveland_upload.csv")
 
-# Splitting the dataset into features and target variable
-X = data.drop('target', axis=1)
-y = data['target']
+# creating a copy of dataset so that will not affect our original dataset.
+heart_df = heart.copy()
 
-# Splitting the dataset into the Training set and Test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Renaming some of the columns 
+heart_df = heart_df.rename(columns={'condition':'target'})
+print(heart_df.head())
 
-# Initialize the SVM Classifier with probability=True
-svm_classifier = SVC(kernel='linear', random_state=42, probability=True)
+# model building 
 
-# Train the model
-svm_classifier.fit(X_train, y_train)
+#fixing our data in x and y. Here y contains target data and X contains rest all the features.
+x= heart_df.drop(columns= 'target')
+y= heart_df.target
 
-# Make predictions
-y_pred = svm_classifier.predict(X_test)
+# splitting our dataset into training and testing for this we will use train_test_split library.
+x_train, x_test, y_train, y_test= train_test_split(x, y, test_size= 0.25, random_state=42)
 
-# Calculate accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy of SVM Classifier:", accuracy)
+#feature scaling
+scaler= StandardScaler()
+x_train_scaler= scaler.fit_transform(x_train)
+x_test_scaler= scaler.fit_transform(x_test)
 
-# Save the model to disk
-joblib.dump(svm_classifier, 'heart_disease_prediction_model_svm.joblib')
+# creating K-Nearest-Neighbor classifier
+model=RandomForestClassifier(n_estimators=20)
+model.fit(x_train_scaler, y_train)
+y_pred= model.predict(x_test_scaler)
+p = model.score(x_test_scaler,y_test)
+print(p)
+
+print('Classification Report\n', classification_report(y_test, y_pred))
+print('Accuracy: {}%\n'.format(round((accuracy_score(y_test, y_pred)*100),2)))
+
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+
+# Creating a pickle file for the classifier
+filename = 'heart-disease-prediction-knn-model.pkl'
+pickle.dump(model, open(filename, 'wb'))

@@ -13,10 +13,11 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import joblib
+import pickle
 
 
 diabetics_model = joblib.load('train/diabetes_prediction_model_svm.joblib')
-heart_disease_model = joblib.load('train/heart_disease_prediction_model_svm.joblib')
+heart_disease_model = pickle.load(open('train/heart-disease-prediction-knn-model.pkl','rb'))
 def index(request):
     food=Food.objects.all()
     return render(request,"index.html",{
@@ -322,45 +323,40 @@ def diabetes_detection(request):
 def predict_heart_disease(request):
     details=UserDetails.objects.filter(username=request.user).first()
     if request.method == 'POST':
-            # Extract input data from the request
-            age=int(details.age)
-            if details.gender== 'male':
-                sex=1
-            else:
-                sex=0
-            cp = int(request.POST.get('cp'))
-            trestbps = int(request.POST.get('trestbps'))
-            chol = int(request.POST.get('chol'))
-            fbs = int(request.POST.get('fbs'))
-            restecg = int(request.POST.get('restecg'))
-            thalach = int(request.POST.get('thalach'))
-            exang = int(request.POST.get('exang'))
-            oldpeak = float(request.POST.get('oldpeak'))
-            slope = int(request.POST.get('slope'))
-            ca = int(request.POST.get('ca'))
-            thal = int(request.POST.get('thal'))
+        age = int(details.age)
+        sex = 1 if details.gender == 'male' else 0
+        cp = int(request.POST.get('cp'))
+        trestbps = int(request.POST.get('trestbps'))
+        chol = int(request.POST.get('chol'))
+        fbs = int(request.POST.get('fbs'))
+        restecg = int(request.POST.get('restecg'))
+        thalach = int(request.POST.get('thalach'))
+        exang = int(request.POST.get('exang'))
+        oldpeak = float(request.POST.get('oldpeak'))
+        slope = int(request.POST.get('slope'))
+        ca = int(request.POST.get('ca'))
+        thal = int(request.POST.get('thal'))
 
-            # Preprocess the input data
-            input_data = np.array([[age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
-            # Make prediction
-            prediction = heart_disease_model.predict(input_data)[0]
-            
-            # Get the probability of heart disease
-            
+        # Preprocess the input data
+        input_data = np.array([[age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal]])
+        print(input_data)
+        # Make prediction
+        prediction = heart_disease_model.predict(input_data)
+# 
+        # Return the prediction result
+        if prediction == 1:
+            prediction_result = "Heart disease detected"
+            prediction_proba = heart_disease_model.predict_proba(input_data)[0]
+            percentage_chance = prediction_proba[1] * 100  # probability of class 1 (heart disease)
+        else:
+            prediction_result = "No heart disease detected"
+            prediction_proba = heart_disease_model.predict_proba(input_data)[0]
+            percentage_chance = 0  # probability of class 1 (heart disease)
 
-            # Return the prediction result
-            if prediction == 1:
-                prediction_result = "Heart disease detected"
-                prediction_proba = heart_disease_model.predict_proba(input_data)[0]
-                percentage_chance = prediction_proba[1] * 100  # probability of class 1 (heart disease)
-            else:
-                prediction_result = "No heart disease detected"
-                prediction_proba = heart_disease_model.predict_proba(input_data)[0]
-                percentage_chance = 0  # probability of class 1 (heart disease)            
-            # Return the prediction result and the probability of heart disease
-            return JsonResponse({
-                'message': prediction_result, 
-                'chance_heart_disease': f'{percentage_chance:.2f}%'
-            })
+        # Return the prediction result and the probability of heart disease
+        return JsonResponse({
+            'message': prediction_result, 
+            'chance_heart_disease': f'{percentage_chance:.2f}%'
+        })
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
