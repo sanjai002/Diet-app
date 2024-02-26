@@ -243,7 +243,7 @@
           // Display prediction result
           $('#heart-disease-result').text(response.message);
           $('#heart-disease-chance').text('Chance of heart disease: ' + response.chance_heart_disease);
-          //$("#heart-disease-form")[0].reset();
+          $("#heart-disease-form")[0].reset();
         },
         error: function (xhr, status, error) {
           console.error(formData)
