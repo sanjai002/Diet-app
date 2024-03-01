@@ -1,5 +1,6 @@
 # models.py
 
+from tarfile import NUL
 from telnetlib import BM
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -7,6 +8,11 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     def __str__(self):
         return f'{self.username}'
+    
+class Goal(models.Model):
+    name=models.CharField(max_length=20, null=False)
+    def __str__(self):
+        return self.name
 
 class UserDetails(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -17,7 +23,7 @@ class UserDetails(models.Model):
     BMR = models.FloatField()
     BMI=models.FloatField()
     daily_calories = models.IntegerField(null=True)
-
+    goal=models.ForeignKey(Goal, on_delete=models.SET_NULL,null=True,blank=True)
 
     def __str__(self):
         return f'{self.username}'
@@ -47,10 +53,11 @@ class FoodCategory(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=50)
-    unit = models.CharField(max_length=30)
+    unit = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name + " (" + self.unit + ")"
+
 
 
 class Food(models.Model):
@@ -66,7 +73,8 @@ class Food(models.Model):
     image = models.ImageField(upload_to='foods/')
     is_featured = models.BooleanField(default=False)
     ingredients = models.ManyToManyField(Ingredient,blank=True)
-    Preparation=models.TextField(null=True)
+    Preparation=models.TextField(null=True,blank=True)
+    goal = models.ForeignKey(Goal, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return f'{self.food_name} - category: {self.category}'
 

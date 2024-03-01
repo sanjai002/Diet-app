@@ -1,4 +1,5 @@
 
+from unicodedata import category
 from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from django.urls import path,reverse
@@ -19,7 +20,11 @@ import pickle
 diabetics_model = joblib.load('train/diabetes_prediction_model_svm.joblib')
 heart_disease_model = pickle.load(open('train/heart-disease-prediction-knn-model.pkl','rb'))
 def index(request):
-    food=Food.objects.all()
+    if request.user.is_authenticated and not request.user.is_superuser:
+        User=UserDetails.objects.get(username=request.user)
+        food=Food.objects.filter(goal=User.goal)
+    else:
+        food=Food.objects.all()
     return render(request,"index.html",{
         'food':food
     })
@@ -43,7 +48,6 @@ def food_list(request):
 
 
 def food_details_view(request,food_id):
-
     foods=Food.objects.get(id=food_id)
     restaurants=Restaurant.objects.filter(food=food_id)
     print(restaurants)
@@ -54,13 +58,22 @@ def food_details_view(request,food_id):
                   )
 
 def search_food(request):
+
     foods=[]
     if 'q' in request.GET:
         search_query=request.GET['q']
         if search_query=='all':
-            foods = Food.objects.all().order_by('food_name')
+            if request.user.is_authenticated and not request.user.is_superuser:
+                User_=UserDetails.objects.get(username=request.user)
+                foods = Food.objects.filter(goal=User_.goal).order_by('food_name')
+            else:
+                foods = Food.objects.all().order_by('food_name')
         else:
-            foods = Food.objects.filter(food_name__icontains=search_query).order_by('food_name')
+            if request.user.is_authenticated and not request.user.is_superuser:
+                User_=UserDetails.objects.get(username=request.user)
+                foods = Food.objects.filter(food_name__icontains=search_query,goal=User_.goal).order_by('food_name')
+            else:
+                foods = Food.objects.filter(food_name__icontains=search_query).order_by('food_name')
             
 
     data = [{
@@ -79,9 +92,6 @@ def search_food(request):
 
 
 
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.urls import reverse
 
 def user_login(request):
     next_page = request.GET.get('next')
@@ -134,6 +144,7 @@ def register(request):
 
 @login_required
 def details(request):
+    categories=FoodCategory.objects.all().order_by('category_name')
     if request.method == 'POST':
         age=request.POST['age']
         gender=request.POST['gender']
@@ -148,11 +159,11 @@ def details(request):
         else:
             BMR=447.593 + (9.247*float(weight)) + (3.098*float(height)) -(4.330*float(age))
         TDEE=BMR*float(activity)
-        if goal=='lose':
+        if goal=='Weight Loss':
             calories=TDEE*0.8
-        elif goal=='maintain':
+        elif goal=='Weight Maintain':
             calories=TDEE*1
-        elif goal=='gain':
+        elif goal=='Weight Gain':
             calories=TDEE*1.2
         else:
             pass
@@ -164,7 +175,9 @@ def details(request):
             return render(request,'details.html',{
                 'message':'fill all fields'
             })
-    return render(request,'details.html')
+    return render(request,'details.html',{
+        'categories':categories,
+    })
 
 
 
@@ -236,9 +249,9 @@ def blood_register(request):
 
 @login_required
 def get_user_and_food_info(request):
-    food = Food.objects.all()
     user=request.user
     details = UserDetails.objects.get(username=user)
+    food = Food.objects.filter(goal=details.goal)
     
     try:
         
@@ -336,9 +349,12 @@ def predict_heart_disease(request):
         slope = int(request.POST.get('slope'))
         ca = int(request.POST.get('ca'))
         thal = int(request.POST.get('thal'))
-
+        if fbs>120:
+            fbs_val=1
+        else:
+            fbs_val=0
         # Preprocess the input data
-        input_data = np.array([[age,sex,cp,trestbps,chol,fbs,restecg,thalach,exang,oldpeak,slope,ca,thal]])
+        input_data = np.array([[age,sex,cp,trestbps,chol,fbs_val,restecg,thalach,exang,oldpeak,slope,ca,thal]])
         print(input_data)
         # Make prediction
         prediction = heart_disease_model.predict(input_data)
