@@ -2,6 +2,7 @@
 
 from tarfile import NUL
 from telnetlib import BM
+from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -9,10 +10,6 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.username}'
     
-class Goal(models.Model):
-    name=models.CharField(max_length=20, null=False)
-    def __str__(self):
-        return self.name
 
 class UserDetails(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -23,7 +20,7 @@ class UserDetails(models.Model):
     BMR = models.FloatField()
     BMI=models.FloatField()
     daily_calories = models.IntegerField(null=True)
-    goal=models.ForeignKey(Goal, on_delete=models.SET_NULL,null=True,blank=True)
+    goal=models.CharField(max_length=10, null=True,blank=True)
 
     def __str__(self):
         return f'{self.username}'
@@ -74,7 +71,13 @@ class Food(models.Model):
     is_featured = models.BooleanField(default=False)
     ingredients = models.ManyToManyField(Ingredient,blank=True)
     Preparation=models.TextField(null=True,blank=True)
-    goal = models.ForeignKey(Goal, on_delete=models.SET_NULL, null=True, blank=True)
+    goal=models.CharField(max_length=10, null=True,blank=True)
+    CHOICES = (
+        ('Weight Loss', 'Weight Loss'),
+        ('Weight Gain', 'Weight Gain') ,
+        ('Weight Maintain', 'Weight Maintain'),
+    )
+    goal = models.CharField(max_length=20, choices=CHOICES)
     def __str__(self):
         return f'{self.food_name} - category: {self.category}'
 

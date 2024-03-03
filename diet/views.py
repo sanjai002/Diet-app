@@ -63,7 +63,7 @@ def search_food(request):
     if 'q' in request.GET:
         search_query=request.GET['q']
         if search_query=='all':
-            if request.user.is_authenticated and not request.user.is_superuser:
+            if  request.user.is_authenticated and not request.user.is_superuser:
                 User_=UserDetails.objects.get(username=request.user)
                 foods = Food.objects.filter(goal=User_.goal).order_by('food_name')
             else:
@@ -169,7 +169,7 @@ def details(request):
             pass
         try:
             user=request.user
-            UserDetails(username=user,age=age,height=height,weight=weight,gender=gender,BMR=BMR,BMI=BMI,daily_calories=calories).save()
+            UserDetails(username=user,age=age,height=height,weight=weight,gender=gender,BMR=BMR,BMI=BMI,daily_calories=calories,goal=goal).save()
             return redirect(index)
         except:
             return render(request,'details.html',{
