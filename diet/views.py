@@ -1,5 +1,5 @@
 
-from unicodedata import category
+from multiprocessing import context
 from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from django.urls import path,reverse
@@ -13,6 +13,7 @@ from django.db.models import F
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import joblib
 import pickle
 
@@ -376,3 +377,23 @@ def predict_heart_disease(request):
         })
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def article(request):
+    all_articles = Article.objects.all()
+
+    articles_per_page = 10
+    paginator = Paginator(all_articles, articles_per_page)
+    page_number = request.GET.get('page')
+
+    try:
+        articles_page = paginator.page(page_number)
+    except PageNotAnInteger:
+        articles_page = paginator.page(1)
+    except EmptyPage:
+        articles_page = paginator.page(paginator.num_pages)
+    return render(request, 'articles.html', {'page_obj': articles_page})
+
+def article_detail(request, article_id):
+    article=Article.objects.get(id=article_id)
+    other_articles = Article.objects.exclude(id=article_id)[:10]  # Exclude the current article and limit to 10
+    return render(request, 'article_view.html', {'article': article, 'other_articles': other_articles})

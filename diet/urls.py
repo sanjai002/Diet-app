@@ -21,5 +21,8 @@ urlpatterns=[
     path('disease',views.disease_prediction,name='disease_prediction'),
     path('disease/diabetics_prediction',views.diabetes_detection,name='diabetics_prediction'),
     path('disease/heart_disease_prediction',views.predict_heart_disease,name='heart_disease_prediction'),
+    path('articles',views.article,name="article"),
+    path('article/<int:article_id>/', views.article_detail, name='article_detail'),
+
 
 ]

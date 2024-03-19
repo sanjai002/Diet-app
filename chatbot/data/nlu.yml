@@ -1,0 +1,74 @@
+version: "3.1"
+
+nlu:
+  - examples: |
+      - Can you tell me the nutrition data for [pizza](food)?
+      - What are the nutritional values of an [apple](food)?
+      - How many calories are in a [banana](food)?
+      - Give me the nutrition info for [chicken](food)
+    intent: inform
+    
+  - examples: |
+        - Can you tell me the nutrition data for [pizza](food)? It's [two](quantity) servings.
+        - What are the nutritional values of [three](quantity) [apple](food)? 
+        - How many calories are in a [1](quantity) [banana](food)? 
+        - Give me the nutrition info for [2](quantity) [chicken](food). No specific quantity.
+    intent: inform
+
+  - examples: |
+      - Hi
+      - Hello
+      - Hey there
+      - Hey
+    intent: greet
+
+  - examples: |
+      - Goodbye
+      - Bye
+      - See you later
+      - Take care
+    intent: goodbye
+
+  - examples: |
+      - Yes
+      - Yeah
+      - Yup
+      - Affirmative
+    intent: affirm
+
+  - examples: |
+      - No
+      - Nope
+      - Nah
+      - Negative
+    intent: deny
+
+  - examples: |
+      - I'm feeling great
+      - Feeling awesome
+      - Fantastic
+      - Excellent
+    intent: mood_great
+
+  - examples: |
+      - I'm feeling sad
+      - Not doing well
+      - Feeling down
+      - Depressed
+    intent: mood_unhappy
+
+  - examples: |
+      - What can you do?
+      - Tell me more
+      - How do you work?
+      - What is your purpose?
+    intent: general_query
+
+  - examples: |
+      - Oops
+      - Sorry, I didn't mean that
+      - My mistake
+      - Ignore that
+    intent: fallback
+
+

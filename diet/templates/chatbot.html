@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasa Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .chat-body {
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .message-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .message {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+
+        .user-message {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #e5e5ea;
+        }
+
+        .input-container {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .user-input:focus {
+            outline: none;
+        }
+
+        .send-btn {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Add animation */
+        @keyframes slideInFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-container {
+            animation: slideInFromLeft 0.5s ease;
+        }
+
+        /* Moving chatbot avatar animation */
+        @keyframes moveChatbot {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-avatar {
+            position: absolute;
+            bottom: 10px;
+            right: -80px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: moveChatbot 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Rasa Chatbot</div>
+        <div class="chat-body" id="chat-body">
+            <!-- Chat messages will be appended here dynamically -->
+        </div>
+        <div class="input-container">
+            <input type="text" id="user-input" class="user-input" placeholder="Type your message...">
+            <button id="send-btn" class="send-btn">Send</button>
+        </div>
+        <div class="chatbot-avatar"></div>
+    </div>
+
+    <script>
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function sendMessage(message, sender) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            messageDiv.textContent = message;
+
+            if (sender === 'user') {
+                const avatar = document.createElement('img');
+                avatar.src = 'user_avatar.png'; // Replace with actual user avatar URL
+                avatar.classList.add('avatar');
+                messageContainer.appendChild(avatar);
+            }
+
+            messageContainer.appendChild(messageDiv);
+            chatBody.appendChild(messageContainer);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Event listener for user input
+        function handleInput() {
+            const message = userInput.value.trim();
+            if (message !== '') {
+                sendMessage(message, 'user');
+                userInput.value = '';
+
+                // Simulate bot response (replace with actual Rasa integration)
+                setTimeout(function () {
+                    const botResponse = 'This is a sample bot response.';
+                    sendMessage(botResponse, 'bot');
+                }, 500);
+            }
+        }
+
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleInput();
+            }
+        });
+
+        sendBtn.addEventListener('click', handleInput);
+    </script>
+</body>
+</html>

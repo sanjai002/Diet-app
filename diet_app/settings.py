@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'diet',
     'django_crontab',
+
+
 ]
 
 MIDDLEWARE = [
@@ -119,6 +122,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join('diet/static'), )
+STATIC_ROOT = BASE_DIR / 'diet/staticfiles'
+
 
 # Base url to serve media files  
 MEDIA_URL = '/media/'  
@@ -137,3 +142,4 @@ AUTH_USER_MODEL = "diet.User"
 CRONJOBS = [
     ('0 0 * * *', 'myapp.management.commands.reset_calories.Command'),
 ]
+

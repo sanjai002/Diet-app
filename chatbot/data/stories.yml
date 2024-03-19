@@ -1,0 +1,48 @@
+version: "3.1"
+
+stories:
+- story: Greet and get nutrition data
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: inform
+    entities:
+      - food: "pizza"
+      -  quantity: "one"
+  - action: action_get_nutrition_data
+
+  
+- story: Handle goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: Handle affirmation
+  steps:
+  - intent: affirm
+  - action: utter_thanks
+
+- story: Handle denial
+  steps:
+  - intent: deny
+  - action: utter_default
+
+- story: Handle happy mood
+  steps:
+  - intent: mood_great
+  - action: utter_happy
+
+- story: Handle sad mood
+  steps:
+  - intent: mood_unhappy
+  - action: utter_sad
+
+- story: Handle general query
+  steps:
+  - intent: general_query
+  - action: utter_general_query
+
+- story: Fallback scenario
+  steps:
+  - intent: fallback
+  - action: utter_fallback

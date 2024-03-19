@@ -1,0 +1,47 @@
+version: "3.1"
+
+intents:
+  - inform
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - general_query
+  - fallback
+
+entities:
+  - food
+  - quantity
+
+responses:
+  utter_greet:
+    - text: "Hello! How can I assist you today?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day."
+
+  utter_default:
+    - text: "Sorry, I didn't understand that. Can you please rephrase?"
+
+  utter_happy:
+    - text: "I'm glad to hear that!"
+
+  utter_sad:
+    - text: "I'm sorry to hear that. Is there anything I can help with?"
+
+  utter_thanks:
+    - text: "You're welcome!"
+
+  utter_iamabot:
+    - text: "Yes, I'm a chatbot! How can I assist you today?"
+
+  utter_general_query:
+    - text: "I'm here to assist you with nutrition data. Just ask!"
+
+  utter_fallback:
+    - text: "Sorry, I didn't get that. Can you please repeat or rephrase?"
+
+actions:
+  - action_get_nutrition_data
