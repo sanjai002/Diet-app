@@ -16,10 +16,21 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import joblib
 import pickle
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import numpy as np
+import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
+
 
 
 diabetics_model = joblib.load('train/diabetes_prediction_model_svm.joblib')
 heart_disease_model = pickle.load(open('train/heart-disease-prediction-knn-model.pkl','rb'))
+nutrition_model= model = load_model('train/model.h5')  # Replace with the path to your model
+
+
 def index(request):
     if request.user.is_authenticated and not request.user.is_superuser:
         User=UserDetails.objects.get(username=request.user)
@@ -397,3 +408,37 @@ def article_detail(request, article_id):
     article=Article.objects.get(id=article_id)
     other_articles = Article.objects.exclude(id=article_id)[:10]  # Exclude the current article and limit to 10
     return render(request, 'article_view.html', {'article': article, 'other_articles': other_articles})
+
+def predict_image(request):
+
+    if request.method == 'POST' and request.FILES.get('image'):
+        # Load the trained model
+        # Replace 'nutrition_model' with the actual name of your trained model variable
+        
+        # Handle the uploaded image
+        uploaded_image = request.FILES['image']
+        
+        
+            # Preprocess the image
+        img = None
+        if isinstance(uploaded_image, InMemoryUploadedFile):
+                # If the uploaded image is in memory, convert it to bytes
+            img_bytes = uploaded_image.read()
+            img = image.load_img(io.BytesIO(img_bytes), target_size=(100, 100))
+        else:
+                # If the uploaded image is already a file, use its path
+            img = image.load_img(uploaded_image, target_size=(100, 100))
+            
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array /= 255.0  # Rescale pixel values to [0, 1]
+        classes=['Iron Deficiency','No deficiency','Vitamin A Deficiency','Vitamin C Deficiency','Zinc Deficiency']
+        prediction = nutrition_model.predict(img_array)
+        predicted_class = np.argmax(prediction)
+        result=classes[predicted_class]
+        return JsonResponse({'message': result})
+
+
+    else:
+        # Handle GET requests or requests without an uploaded image
+        return render(request, 'error_page.html')
